@@ -58,6 +58,12 @@ public class Log4jServletContextListener implements ServletContextListener {
         } catch (final IllegalStateException e) {
             throw new IllegalStateException("Failed to initialize Log4j properly.", e);
         }
+
+        if (servletContext.getAttribute(Log4jWebSupport.LOG4J_INITIALIZER) != null) {
+            LOGGER.warn("Context contained attribute '"+ Log4jWebSupport.LOG4J_INITIALIZER 
+                    + "' which is populated when Log4jServletContainerInitializer initializes log4j. Please use "
+                    + "Log4jServletDestroyedListener instead of " + getClass().getSimpleName());
+        }
     }
 
     @Override
