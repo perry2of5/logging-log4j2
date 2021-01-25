@@ -63,13 +63,6 @@ public interface Log4jWebSupport {
     String IS_LOG4J_AUTO_SHUTDOWN_DISABLED = "isLog4jAutoShutdownDisabled";
 
     /**
-     * The {@link javax.servlet.ServletContext} attribute name used to pass the {@link Log4jWebLifeCycle} initializer
-     * from the auto-initialization in Servlet 3.0+ web applications out to another component that will
-     * shut down log4j. Currently this would be {@link Log4jServletDestroyedListener}
-     */
-    String LOG4J_INITIALIZER = "log4jInitializer";
-
-    /**
      * The attribute key for the {@link javax.servlet.ServletContext} attribute that the singleton support instance
      * is stored in.
      */

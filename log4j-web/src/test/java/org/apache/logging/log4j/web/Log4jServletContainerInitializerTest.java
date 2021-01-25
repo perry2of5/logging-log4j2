@@ -18,6 +18,7 @@ package org.apache.logging.log4j.web;
 
 import java.util.EnumSet;
 import java.util.EventListener;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
@@ -30,14 +31,18 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Log4jServletContainerInitializerTest {
@@ -80,6 +85,29 @@ public class Log4jServletContainerInitializerTest {
             "true");
 
         this.containerInitializer.onStartup(null, this.servletContext);
+    }
+
+    @Test
+    public void testOnStartupWithServletVersion3_xEffectiveVersion3_xShutdownDisabled() throws Exception {
+        final FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
+        given(servletContext.getMajorVersion()).willReturn(3);
+        given(servletContext.getEffectiveMajorVersion()).willReturn(3);
+        given(servletContext.getInitParameter(eq(Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED)))
+        		.willReturn("true");
+        given(servletContext.getInitParameter(eq(Log4jWebSupport.IS_LOG4J_AUTO_INITIALIZATION_DISABLED))).willReturn(
+                null);
+        given(servletContext.addFilter(eq("log4jServletFilter"), filterCaptor.capture())).willReturn(registration);
+        given(servletContext.getAttribute(Log4jWebSupport.SUPPORT_ATTRIBUTE)).willReturn(initializer);
+
+        this.containerInitializer.onStartup(null, this.servletContext);
+
+        then(initializer).should().start();
+        then(initializer).should().setLoggerContext();
+        then(registration).should().setAsyncSupported(eq(true));
+        then(registration).should().addMappingForUrlPatterns(eq(EnumSet.allOf(DispatcherType.class)), eq(false), eq("/*"));
+
+        // initParam IS_LOG4J_AUTO_SHUTDOWN_DISABLED is "true" so addListener shouldn't be called.
+        then(servletContext).should(never()).addListener(any(Log4jServletContextListener.class));
     }
 
     @Test

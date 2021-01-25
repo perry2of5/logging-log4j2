@@ -24,12 +24,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.never;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Log4jServletContextListenerTest {
@@ -73,5 +78,39 @@ public class Log4jServletContextListenerTest {
             assertEquals("The message is not correct.", "Failed to initialize Log4j properly.", e.getMessage());
         }
     }
+    
+    @Test
+    public void testDestroyWithNoInit() {
+        this.listener.contextDestroyed(this.event);
 
+        then(initializer).should(never()).clearLoggerContext();
+        then(initializer).should(never()).stop();
+    }
+
+    @Test
+    public void initializingLog4jServletContextListenerShouldFaileWhenAutoShutdownIsTrue() throws Exception {
+    	given(servletContext.getInitParameter(eq(Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED)))
+    			.willReturn("true");
+        ensureInitializingFailsWhenAuthShutdownIsEnabled();
+    }
+
+    @Test
+    public void initializingLog4jServletContextListenerShouldFaileWhenAutoShutdownIsTRUE() throws Exception {
+    	given(servletContext.getInitParameter(eq(Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED)))
+    			.willReturn("TRUE");
+        ensureInitializingFailsWhenAuthShutdownIsEnabled();
+    }
+    
+    private void ensureInitializingFailsWhenAuthShutdownIsEnabled() {
+    	try {
+    		this.listener.contextInitialized(this.event);
+    		fail("Expected a RuntimeException.");
+    	} catch (final RuntimeException e) {
+    		assertThat("The message is not correct", e.getMessage(),
+    				is("Do not use " + Log4jServletContextListener.class.getSimpleName() + " when " 
+    						+ Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED + " is true. Please use " 
+    						+ Log4jServletDestroyedListener.class.getSimpleName() + " instead of " 
+    						+ Log4jServletContextListener.class.getSimpleName() + "."));
+    	}
+    }
 }

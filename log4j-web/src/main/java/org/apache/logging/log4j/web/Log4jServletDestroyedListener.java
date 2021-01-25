@@ -43,16 +43,14 @@ public class Log4jServletDestroyedListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        LOGGER.debug("Log4jServletContextListener ensuring that Log4j started up properly.");
+        LOGGER.debug("Log4jServletDestroyedListener ensuring that Log4j started up properly.");
         servletContext = event.getServletContext();
-        this.initializer = (Log4jWebLifeCycle) 
-                servletContext.getAttribute(Log4jWebSupport.LOG4J_INITIALIZER);
-        if (initializer == null) {
-            LOGGER.warn("Context did not contain required Log4jWebLifeCycle in attribute '" 
-                    + Log4jWebSupport.LOG4J_INITIALIZER + "'. Please only use "
-                    + "Log4jServletDestroyedListener with " 
-                    + Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED + " set to true");
+        if (null == servletContext.getAttribute(Log4jWebSupport.SUPPORT_ATTRIBUTE)) {
+        	throw new IllegalStateException(
+        			"Context did not contain required Log4jWebLifeCycle in the " 
+        			+ Log4jWebSupport.SUPPORT_ATTRIBUTE + " attribute.");
         }
+        this.initializer = WebLoggerContextUtils.getWebLifeCycle(servletContext);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class Log4jServletDestroyedListener implements ServletContextListener {
             LOGGER.warn("Context destroyed before it was initialized.");
             return;
         }
-        LOGGER.debug("Log4jServletContextListener ensuring that Log4j shuts down properly.");
+        LOGGER.debug("Log4jServletDestroyedListener ensuring that Log4j shuts down properly.");
 
         this.initializer.clearLoggerContext(); // the application is finished
         // shutting down now

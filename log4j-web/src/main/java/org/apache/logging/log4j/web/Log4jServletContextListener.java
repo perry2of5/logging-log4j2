@@ -59,10 +59,12 @@ public class Log4jServletContextListener implements ServletContextListener {
             throw new IllegalStateException("Failed to initialize Log4j properly.", e);
         }
 
-        if (servletContext.getAttribute(Log4jWebSupport.LOG4J_INITIALIZER) != null) {
-            LOGGER.warn("Context contained attribute '"+ Log4jWebSupport.LOG4J_INITIALIZER 
-                    + "' which is populated when Log4jServletContainerInitializer initializes log4j. Please use "
-                    + "Log4jServletDestroyedListener instead of " + getClass().getSimpleName());
+        if ("true".equalsIgnoreCase(servletContext.getInitParameter(
+                Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED))) {
+        	throw new IllegalStateException("Do not use " + getClass().getSimpleName() + " when " 
+            		+ Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED + " is true. Please use "
+                    + Log4jServletDestroyedListener.class.getSimpleName() + " instead of " 
+            		+ getClass().getSimpleName() + ".");
         }
     }
 
