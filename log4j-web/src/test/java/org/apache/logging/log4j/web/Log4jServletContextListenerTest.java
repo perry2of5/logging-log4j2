@@ -52,7 +52,6 @@ public class Log4jServletContextListenerTest {
 
     @BeforeEach
     public void setUp() {
-    	System.err.println("setUp()");
         this.listener = new Log4jServletContextListener();
         given(event.getServletContext()).willReturn(servletContext);
         given(servletContext.getAttribute(Log4jWebSupport.SUPPORT_ATTRIBUTE)).willReturn(initializer);
@@ -60,7 +59,6 @@ public class Log4jServletContextListenerTest {
 
     @Test
     public void testInitAndDestroy() throws Exception {
-    	System.err.println("testInitAndDestroy()");
         this.listener.contextInitialized(this.event);
 
         then(initializer).should().start();
