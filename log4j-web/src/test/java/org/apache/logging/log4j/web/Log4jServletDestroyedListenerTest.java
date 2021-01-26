@@ -24,16 +24,16 @@ import static org.mockito.Mockito.never;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class Log4jServletDestroyedListenerTest {
-    @Mock
+    @Mock(lenient = true)
     private ServletContextEvent event;
-    @Mock
+    @Mock(lenient = true)
     private ServletContext servletContext;
     @Mock
     private Log4jWebLifeCycle initializer;

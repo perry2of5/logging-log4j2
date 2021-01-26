@@ -26,7 +26,7 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.impl.ContextAnchor;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.junit.Assert.*;

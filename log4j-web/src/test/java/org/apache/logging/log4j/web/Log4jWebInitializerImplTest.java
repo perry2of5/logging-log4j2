@@ -24,13 +24,13 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.core.config.composite.CompositeConfiguration;
 import org.apache.logging.log4j.core.impl.ContextAnchor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -47,9 +47,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class Log4jWebInitializerImplTest {
-    @Mock
+	/* Marking servletContext lenient because otherwise testCompositeLocationParameterWithEmptyUriListSetsDefaultConfiguration fails
+	 * when null is passed in as the initial param because Mockito deciced null isn't a String rather than the absence of a string.
+	 */
+    @Mock(lenient = true)
     private ServletContext servletContext;
     @Captor
     private ArgumentCaptor<Log4jWebLifeCycle> initializerCaptor;

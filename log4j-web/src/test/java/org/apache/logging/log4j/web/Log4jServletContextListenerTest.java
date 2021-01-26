@@ -20,11 +20,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,11 +36,14 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class Log4jServletContextListenerTest {
-    @Mock
+	/* event and servletContext are marked lenient because they aren't used in the 
+	 * testDestroyWithNoInit but are only accessed during initialization 
+	 */
+    @Mock(lenient = true)
     private ServletContextEvent event;
-    @Mock
+    @Mock(lenient = true)
     private ServletContext servletContext;
     @Mock
     private Log4jWebLifeCycle initializer;
@@ -49,6 +52,7 @@ public class Log4jServletContextListenerTest {
 
     @BeforeEach
     public void setUp() {
+    	System.err.println("setUp()");
         this.listener = new Log4jServletContextListener();
         given(event.getServletContext()).willReturn(servletContext);
         given(servletContext.getAttribute(Log4jWebSupport.SUPPORT_ATTRIBUTE)).willReturn(initializer);
@@ -56,6 +60,7 @@ public class Log4jServletContextListenerTest {
 
     @Test
     public void testInitAndDestroy() throws Exception {
+    	System.err.println("testInitAndDestroy()");
         this.listener.contextInitialized(this.event);
 
         then(initializer).should().start();
