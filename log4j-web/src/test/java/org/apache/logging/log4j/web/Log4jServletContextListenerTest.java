@@ -20,8 +20,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.logging.log4j.util.Strings;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -47,7 +47,7 @@ public class Log4jServletContextListenerTest {
 
     private Log4jServletContextListener listener;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.listener = new Log4jServletContextListener();
         given(event.getServletContext()).willReturn(servletContext);

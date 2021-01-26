@@ -25,8 +25,8 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 
 import org.apache.logging.log4j.util.Strings;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -57,7 +57,7 @@ public class Log4jServletContainerInitializerTest {
 
     private Log4jServletContainerInitializer containerInitializer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.containerInitializer = new Log4jServletContainerInitializer();
     }
